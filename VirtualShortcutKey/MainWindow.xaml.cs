@@ -127,7 +127,8 @@ namespace VirtualShortcutKey
 
             var accent = new AccentPolicy();
             var accentStructSize = Marshal.SizeOf(accent);
-            accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
+            // ウィンドウ背景のぼかしを行うのはWindows10の場合のみ
+            accent.AccentState = IsWin10() ? AccentState.ACCENT_ENABLE_BLURBEHIND : AccentState.ACCENT_ENABLE_TRANSPARENTGRADIENT;
             accent.AccentFlags = 2;
             accent.GradientColor = 0x80111111;
 
@@ -142,6 +143,28 @@ namespace VirtualShortcutKey
             SetWindowCompositionAttribute(windowHelper.Handle, ref data);
 
             Marshal.FreeHGlobal(accentPtr);
+        }
+
+        /// <summary>
+        /// 実行環境のOSがWindows10か否かを判定
+        /// </summary>
+        /// <returns></returns>
+        internal static bool IsWin10()
+        {
+            var isWin10 = false;
+            using (var mc = new System.Management.ManagementClass("Win32_OperatingSystem"))
+            using (var moc = mc.GetInstances())
+            {
+                foreach (System.Management.ManagementObject mo in moc)
+                {
+                    var version = mo["Version"] as string;
+                    var majar = version.Split('.')
+                                       .FirstOrDefault();
+                    isWin10 = majar == "10";
+                }
+            }
+
+            return isWin10;
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
