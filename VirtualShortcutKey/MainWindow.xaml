@@ -22,7 +22,7 @@
     <Window.Background>
         <!-- Tiled noise texture -->
         <ImageBrush ImageSource="Assets/Images/noise.png"
-                    Opacity="0.05"
+                    Opacity="0.03"
                     Stretch="None"
                     TileMode="Tile"
                     Viewport="0,0,128,128"
